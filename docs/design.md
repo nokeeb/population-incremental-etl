@@ -53,3 +53,77 @@ to demonstrate loading new records.
 
 Other scenarios will demonstrate updates, late-arriving changes,
 invalid records, and recovery after a failed run.
+
+## Database model
+![alt text](image.png)
+
+**Database:** population_incremental
+
+## **Schemas:**
+### - source (source system)
+##### **Table(s):**
+
+**area_population**:
+- area_code
+- area_name
+- population_raw
+- reference_year
+- updated_at
+ 
+**Grain** : 1 row represents 1 raw state of an area.
+
+### - etl (represents pipeline info)
+##### **Table(s):**
+**pipeline_runs**:
+- run_id
+- started_at
+- finished_at
+- status
+- watermark_before
+- watermark_after
+- extracted_count
+- valid_count
+- invalid_count
+- inserted_count
+- updated_count
+- unchanged_count
+- error_message
+
+**Grain:** 1 row represents 1 pipeline run in 1 period of time.
+
+**pipeline_state:**
+- pipeline_name
+- last_watermark 
+
+**Grain:**: 1 row represents one pipeline, saving its last sucessful watermark.
+### - staging (final station before cleaning and loading the data)
+##### **Table(s):**
+**area_population**:
+- run_id
+- area_code
+- area_name
+- population
+- reference_year
+- source_updated_at 
+
+**Grain:** one row represents one last state of an area before ETL.
+
+
+### - analytics (target system, cleaned and loaded data)
+##### Tables(s):
+**area_population**
+- area_code
+- area_name 
+- population
+- reference_year
+- source_updated_at
+- loaded_at
+- last_run_id 
+
+**Grain:** one row represents the last successful processed version of an area
+
+## Relationships
+
+`analytics.area_population` **1 : N** `etl.pipeline_runs` 
+
+(1 pipeline run can contain several areas)
