@@ -1,6 +1,5 @@
 import psycopg2
-
-from . import config 
+import config
 
 def get_connection(database_name):
     conn=psycopg2.connect(

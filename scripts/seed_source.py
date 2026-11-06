@@ -15,9 +15,8 @@ with open(PROJECT_ROOT/'data'/'source'/'2014_usa_states.csv','r') as file:
     try:
         conn=database.get_connection(config.PG_DBNAME)
         cur=conn.cursor()
-    except Exception as e:
-        print(f'Error occurred:{e}')
-        sys.exit(1)
+    except Exception:
+        raise
     for line in parsed_file:
         if int(line['Rank'])<=50:
             cur.execute(("""INSERT INTO source.area_population(area_code,area_name,population_raw,reference_year,updated_at)

@@ -12,9 +12,8 @@ def main():
     try:
         admin_conn=database.get_connection('postgres')
         admin_conn.autocommit=True
-    except Exception as e:
-        print(f"Error occured: {e}")
-        sys.exit(1)
+    except Exception:
+        raise
 
     admin_cur=admin_conn.cursor()
     try:
@@ -23,13 +22,12 @@ def main():
         exists=admin_cur.fetchone()
         if not exists:
             admin_cur.execute(f"""CREATE DATABASE {config.PG_DBNAME}""")
-    except Exception as e:
-        print(f'Error occurred:{e}')
+    except Exception:
         print(f"""Cannot create database {config.PG_DBNAME}.
         PostgreSQL user '{config.PG_USER}' does not have permission to create databases.
         Use an account with CREATEDB permission or ask the database administrator 
         to create the database""")
-        sys.exit(1)
+        raise
     finally:
         admin_cur.close()
         admin_conn.close()  
@@ -41,10 +39,8 @@ def main():
         try:
             cur.execute(script)
             conn.commit()
-        except Exception as e:
-            print(f"Error occured: {e}")
-            conn.rollback()
-            sys.exit(1)
+        except Exception:
+            raise
         finally:
             cur.close()
             conn.close()
