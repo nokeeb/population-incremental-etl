@@ -11,7 +11,6 @@ content=None
 
 with open(PROJECT_ROOT/'data'/'source'/'2014_usa_states.csv','r') as file:
     parsed_file=csv.DictReader(file)
-    print(parsed_file)
     try:
         conn=database.get_connection(config.PG_DBNAME)
         cur=conn.cursor()
