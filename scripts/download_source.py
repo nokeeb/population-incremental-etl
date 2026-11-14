@@ -7,13 +7,20 @@ sys.path.insert(0,str(PROJECT_ROOT))
 from src import config
 import requests
 import csv
+import logging
 
-request_string=f'{config.SOURCE_CSV_URL}'
+logging.basicConfig(filename=PROJECT_ROOT/'logs'/'download_source.log',level=logging.INFO)
+try:
 
-response=requests.get(request_string,timeout=30)
+    request_string=f'{config.SOURCE_CSV_URL}'
 
-if response.raise_for_status():
-    sys.exit(1)
+    response=requests.get(request_string,timeout=30)
+
+    response.raise_for_status()
+    
+except Exception as e:
+        logging.error(f"HTTP error. {e}")
+        sys.exit(1)
 
 response_content=response.text
 
@@ -42,6 +49,7 @@ with open(config.SOURCE_CSV_PATH,'r') as file:
 
 if unexpected==True:
     sys.exit(1)
+
 else:
     print('Successful CSV download.')
     print(f'Total rows: {total_rows}')

@@ -3,7 +3,7 @@ def stage_records(conn,run_id,validated_records):
     cur=conn.cursor()
     try:
         for record in validated_records:
-            record_to_insert=(run_id,record[0],record[1],record[2],record[3],record[4])
+            record_to_insert=(str(run_id),record[0],record[1],record[2],record[3],record[4])
             cur.execute("""INSERT INTO staging.area_population(run_id,area_code,area_name,population,reference_year,source_updated_at)
                             VALUES(%s,%s,%s,%s,%s,%s)""",record_to_insert)
             inserted_rows=inserted_rows+1

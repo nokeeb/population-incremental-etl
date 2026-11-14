@@ -1,4 +1,4 @@
-import database, config
+from . import database, config
 from datetime import timedelta
 
 def extract_records(watermark_before):
